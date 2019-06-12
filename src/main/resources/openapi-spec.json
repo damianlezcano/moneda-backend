@@ -1,0 +1,148 @@
+{
+  "definitions": {
+    "Moneda": {
+      "description": "Representa una moneda",
+      "example": "{\n    \"id\":1,\n    \"simbolo\":\"ARG\",\n    \"descripcion\": \"Pesos Argentinos\",\n    \"cotizacion\": 46.5\n}",
+      "properties": {
+        "cotizacion": {
+          "format": "double",
+          "type": "number"
+        },
+        "descripcion": {
+          "type": "string"
+        },
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "simbolo": {
+          "type": "string"
+        }
+      },
+      "title": "Root Type for Moneda",
+      "type": "object"
+    }
+  },
+  "info": {
+    "description": "Servicio para la gestion de monedas",
+    "title": "Monedas",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/monedas": {
+      "description": "The REST endpoint/path used to list and create zero or more `Moneda` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.",
+      "get": {
+        "description": "Gets a list of all `Moneda` entities.",
+        "operationId": "getMonedas",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response - returns an array of `Moneda` entities.",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Moneda"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "summary": "List All Monedas"
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Creates a new instance of a `Moneda`.",
+        "operationId": "createMoneda",
+        "parameters": [
+          {
+            "description": "A new `Moneda` to be created.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Moneda"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful response."
+          }
+        },
+        "summary": "Create a Moneda"
+      },
+      "summary": "Path used to manage the list of Monedas."
+    },
+    "/monedas/{id}": {
+      "delete": {
+        "description": "Deletes an existing `Moneda`.",
+        "operationId": "deleteMoneda",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Successful response."
+          }
+        },
+        "summary": "Delete a Moneda"
+      },
+      "description": "The REST endpoint/path used to get, update, and delete single instances of an `Moneda`.  This path contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and delete tasks, respectively.",
+      "get": {
+        "description": "Gets the details of a single instance of a `Moneda`.",
+        "operationId": "getMoneda",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response - returns a single `Moneda`.",
+            "schema": {
+              "$ref": "#/definitions/Moneda"
+            }
+          }
+        },
+        "summary": "Get a Moneda"
+      },
+      "parameters": [
+        {
+          "description": "A unique identifier for a `Moneda`.",
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Updates an existing `Moneda`.",
+        "operationId": "updateMoneda",
+        "parameters": [
+          {
+            "description": "Updated `Moneda` information.",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Moneda"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful response."
+          }
+        },
+        "summary": "Update a Moneda"
+      },
+      "summary": "Path used to manage a single Moneda."
+    }
+  },
+  "swagger": "2.0",
+  "x-components": {}
+}

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    
+		<restConfiguration 
+			bindingMode="json" 
+			component="servlet"  
+			apiContextPath="/api-doc" 
+			apiContextListing="false" 
+            enableCORS="true">
+			<dataFormatProperty key="prettyPrint" value="true"/> 
+			<apiProperty key="api.title" value="Monedas" /> 
+			<apiProperty key="api.version" value="1.0.0" /> 
+        </restConfiguration>
+        
+	   <rest>
+	        <get id="getMonedas" produces="application/json" uri="/monedas" outType="io.swagger.client.model.Moneda[]">
+	            <description>Gets a list of all `Moneda` entities.</description>
+	            <to uri="direct:getEntity"/>
+	        </get>
+	        <post consumes="application/json" id="createMoneda" uri="/monedas" type="io.swagger.client.model.Moneda">
+	            <description>Creates a new instance of a `Moneda`.</description>
+	            <param description="A new `Moneda` to be created." name="body" required="true" type="body"/>
+	            <to uri="direct:createEntity"/>
+	        </post>
+	        <get id="getMoneda" produces="application/json" uri="/monedas/{id}" outType="io.swagger.client.model.Moneda">
+	            <description>Gets the details of a single instance of a `Moneda`.</description>
+	            <param dataType="string" description="A unique identifier for a `Moneda`." name="id" required="true" type="path"/>
+	            <to uri="direct:getEntityById"/>
+	        </get>
+	        <put consumes="application/json" id="updateMoneda" uri="/monedas/{id}" type="io.swagger.client.model.Moneda">
+	            <description>Updates an existing `Moneda`.</description>
+	            <param dataType="string" description="A unique identifier for a `Moneda`." name="id" required="true" type="path"/>
+	            <param description="Updated `Moneda` information." name="body" required="true" type="body"/>
+	            <to uri="direct:updateEntity"/>
+	        </put>
+	        <delete id="deleteMoneda" uri="/monedas/{id}">
+	            <description>Deletes an existing `Moneda`.</description>
+	            <param dataType="string" description="A unique identifier for a `Moneda`." name="id" required="true" type="path"/>
+	            <to uri="direct:deleteEntity"/>
+	        </delete>
+	    </rest>
+	        
+	    <route id="_route_listar">
+	        <from uri="direct:getEntity"/>
+	        <log message="# listar"/>
+	        <to uri="bean:mockRepositoryBean?method=list()"/>
+	    </route>
+	
+	    <route id="_route_create">
+	        <from uri="direct:createEntity"/>
+	        <log message="# crear"/>
+	        <to uri="bean:mockRepositoryBean?method=create"/>
+	    </route>
+	
+	    <route id="_route_obtener">
+	        <from uri="direct:getEntityById"/>
+	        <log message="# obtener"/>
+	        <to uri="bean:mockRepositoryBean?method=get(${header.id})"/>
+	    </route>
+	
+	    <route id="_route_actualizar">
+	        <from uri="direct:updateEntity"/>
+	        <log message="# actualizar"/>
+	        <to uri="bean:mockRepositoryBean?method=update(${header.id},${body})"/>
+	    </route>
+	
+	    <route id="_route_eliminar">
+	        <from uri="direct:deleteEntity"/>
+	        <log message="# eliminar"/>
+	        <to uri="bean:mockRepositoryBean?method=remove(${header.id})"/>
+	    </route>
+
+    </camelContext>
+</beans>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.mycompany</groupId>
+	<artifactId>moneda-backend</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<name>Fabric8 :: Quickstarts :: Spring-Boot :: Camel XML</name>
+	<description>Spring Boot example running a Camel route defined in XML</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- configure the versions you want to use here -->
+		<fabric8.version>3.0.11.fuse-720027-redhat-00001</fabric8.version>
+		<spring-boot.version>1.5.4.RELEASE</spring-boot.version>
+
+		<!-- maven plugin versions -->
+		<fabric8.maven.plugin.version>3.5.33.fuse-720026-redhat-00001</fabric8.maven.plugin.version>
+		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-project-bom-camel-spring-boot</artifactId>
+				<version>${fabric8.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- Enabling health checks -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-boot-starter</artifactId>
+		</dependency>
+
+	    <dependency>
+	      <groupId>org.apache.camel</groupId>
+	      <artifactId>camel-servlet</artifactId>
+	    </dependency>  
+
+		<dependency>
+		  <groupId>org.apache.camel</groupId>
+		  <artifactId>camel-jackson-starter</artifactId>
+		</dependency>
+
+		<dependency>
+		  <groupId>org.apache.camel</groupId>
+		  <artifactId>camel-swagger-java-starter</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.apache.camel</groupId>
+		    <artifactId>camel-swagger-java</artifactId>
+		</dependency>
+
+	    <dependency>
+	      <groupId>com.google.code.gson</groupId>
+	      <artifactId>gson</artifactId>
+	      <version>2.8.5</version>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.threeten</groupId>
+	      <artifactId>threetenbp</artifactId>
+	      <version>1.3.7</version>
+	    </dependency>
+
+	</dependencies>
+
+	<build>
+		<defaultGoal>spring-boot:run</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>fabric8-maven-plugin</artifactId>
+				<version>${fabric8.maven.plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>resource</goal>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.camel</groupId>
+			  <artifactId>camel-restdsl-swagger-plugin</artifactId>
+			  <version>2.24.0</version>
+			  <configuration>
+			    <specificationUri>src/main/resources/openapi-spec.json</specificationUri>
+			    <fileName>camel-rest.xml</fileName>
+			    <outputDirectory>src/main/resources/spring</outputDirectory>  
+			        <!-- specify the swagger yaml -->
+			        <!-- <inputSpec>src/main/resources/yaml/swagger.yaml</inputSpec> -->
+			        <!-- target to generate -->
+			        <!-- <language>jaxrs-cxf</language> -->
+			        <!-- <apiPackage>nl.rubix.api</apiPackage> -->
+			        <!-- <modelPackage>nl.rubix.api.model</modelPackage>
+			        <configOptions>
+			        	<sourceFolder>src/main/java</sourceFolder>
+			        </configOptions> -->
+			        <modelWithXml>true</modelWithXml>
+			  </configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>red-hat-ga-repository</id>
+			<url>https://maven.repository.redhat.com/ga</url>
+		</repository>
+		<repository>
+			<id>red-hat-early-access-repository</id>
+			<url>https://maven.repository.redhat.com/earlyaccess/all</url>
+		</repository>
+		<repository>
+			<id>jboss-early-access-repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/ea</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>red-hat-ga-repository</id>
+			<url>https://maven.repository.redhat.com/ga</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>red-hat-early-access-repository</id>
+			<url>https://maven.repository.redhat.com/earlyaccess/all</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>jboss-early-access-repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/ea</url>
+		</pluginRepository>
+	</pluginRepositories>
+</project>
