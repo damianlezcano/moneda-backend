@@ -14,12 +14,12 @@ pipeline {
         }
         stage("Compile Code") {
             steps {
-                sh "mvn package -DskipTests"
+                sh "mvn package -DskipTests -s configuration/settings.xml"
             }
         }
         stage("Test Code") {
             steps {
-                sh "mvn test"
+                sh "mvn test -s configuration/settings.xml"
             }
         }
         stage("Build Image") {
