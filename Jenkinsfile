@@ -26,7 +26,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster {
-                        openshift.withProject {
+                        openshift.withProject(env.PROJECT){
                             openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
                         }
                     }
