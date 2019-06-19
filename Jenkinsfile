@@ -14,12 +14,12 @@ pipeline {
         }
         stage("Compile") {
             steps {
-                sh("echo mvn package -DskipTests")
+                sh("mvn package -DskipTests")
             }
         }
         stage("Test") {
             steps {
-                sh("echo mvn test")
+                sh("mvn test")
             }
         }
         stage("Build Image") {
