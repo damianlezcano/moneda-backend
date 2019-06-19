@@ -7,51 +7,37 @@ pipeline {
         disableConcurrentBuilds()
     }
     stages {
-        stage("Checkout Code") {
+        stage("Checkout") {
             steps {
-                git branch: env.GIT_BRANCH, url: env.GIT_REPO
+                checkout(scm)
             }
         }
-        stage("Compile Code") {
+        stage("Compile") {
             steps {
-                sh "mvn -version"
+                sh("echo mvn package -DskipTests")
             }
         }
-        stage("Test Code") {
+        stage("Test") {
             steps {
-                sh "mvn -version"
+                sh("echo mvn test")
             }
         }
         stage("Build Image") {
             steps {
                 script {
-                    openshift.withCluster {
-                        openshift.withProject("test"){
+                    openshift.withCluster() {
+                        openshift.withProject() {
                             openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
                         }
                     }
                 }
             }
         }
-        stage("Tag Image") {
+        stage("Deploy DEV") {
             steps {
                 script {
-                    openshift.withCluster {
-                        openshift.withProject {
-                            env.TAG = readMavenPom().getVersion()
-                            openshift.tag("${APP_NAME}:latest", "${APP_NAME}:${TAG}")
-                        }
-                    }
-                }
-            }
-        }
-        stage("Deploy Application") {
-            steps {
-                script {
-                    openshift.withCluster {
-                        openshift.withProject {
-                            openshift.set("triggers", "dc/${APP_NAME}", "--remove-all")
-                            openshift.set("triggers", "dc/${APP_NAME}", "--from-image=${APP_NAME}:${TAG}", "-c ${APP_NAME}")
+                    openshift.withCluster() {
+                        openshift.withProject() {
                             openshift.selector("dc", env.APP_NAME).rollout().status()
                         }
                     }
