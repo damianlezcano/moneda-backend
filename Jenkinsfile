@@ -23,31 +23,39 @@ pipeline {
             }
         }
         stage("Build Image") {
-            steps {
-                openshift.withCluster {
-                    openshift.withProject {
-                        openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
+            agent {
+                steps {
+                    script {
+                        openshift.withCluster {
+                            openshift.withProject {
+                                openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
+                            }
+                        }
                     }
                 }
             }
         }
         stage("Tag Image") {
             steps {
-                openshift.withCluster {
-                    openshift.withProject {
-                        env.TAG = readMavenPom().getVersion()
-                        openshift.tag("${APP_NAME}:latest", "${APP_NAME}:${TAG}")
+                script {
+                    openshift.withCluster {
+                        openshift.withProject {
+                            env.TAG = readMavenPom().getVersion()
+                            openshift.tag("${APP_NAME}:latest", "${APP_NAME}:${TAG}")
+                        }
                     }
                 }
             }
         }
         stage("Deploy Application") {
             steps {
-                openshift.withCluster {
-                    openshift.withProject {
-                        openshift.set("triggers", "dc/${APP_NAME}", "--remove-all")
-                        openshift.set("triggers", "dc/${APP_NAME}", "--from-image=${APP_NAME}:${TAG}", "-c ${APP_NAME}")
-                        openshift.selector("dc", env.APP_NAME).rollout().status()
+                script {
+                    openshift.withCluster {
+                        openshift.withProject {
+                            openshift.set("triggers", "dc/${APP_NAME}", "--remove-all")
+                            openshift.set("triggers", "dc/${APP_NAME}", "--from-image=${APP_NAME}:${TAG}", "-c ${APP_NAME}")
+                            openshift.selector("dc", env.APP_NAME).rollout().status()
+                        }
                     }
                 }
             }
