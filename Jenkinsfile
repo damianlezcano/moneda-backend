@@ -24,36 +24,30 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                script {
-                    openshift.withCluster {
-                        openshift.withProject {
-                            openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
-                        }
+                openshift.withCluster {
+                    openshift.withProject {
+                        openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
                     }
                 }
             }
         }
         stage("Tag Image") {
             steps {
-                script {
-                    openshift.withCluster {
-                        openshift.withProject {
-                            env.TAG = readMavenPom().getVersion()
-                            openshift.tag("${APP_NAME}:latest", "${APP_NAME}:${TAG}")
-                        }
+                openshift.withCluster {
+                    openshift.withProject {
+                        env.TAG = readMavenPom().getVersion()
+                        openshift.tag("${APP_NAME}:latest", "${APP_NAME}:${TAG}")
                     }
                 }
             }
         }
         stage("Deploy Application") {
             steps {
-                script {
-                    openshift.withCluster {
-                        openshift.withProject {
-                            openshift.set("triggers", "dc/${APP_NAME}", "--remove-all")
-                            openshift.set("triggers", "dc/${APP_NAME}", "--from-image=${APP_NAME}:${TAG}", "-c ${APP_NAME}")
-                            openshift.selector("dc", env.APP_NAME).rollout().status()
-                        }
+                openshift.withCluster {
+                    openshift.withProject {
+                        openshift.set("triggers", "dc/${APP_NAME}", "--remove-all")
+                        openshift.set("triggers", "dc/${APP_NAME}", "--from-image=${APP_NAME}:${TAG}", "-c ${APP_NAME}")
+                        openshift.selector("dc", env.APP_NAME).rollout().status()
                     }
                 }
             }
