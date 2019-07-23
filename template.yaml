@@ -1,11 +1,35 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: hello-service
   annotations:
-    openshift.io/display-name: Hello Service
-    iconClass: fa fa-code
+    openshift.io/display-name: ${APP_NAME}-pipeline
+  name: ${APP_NAME}-pipeline
 objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      pipeline.alpha.openshift.io/uses: '[{"name": "${APP_NAME}", "kind": "DeploymentConfig"}]'
+    labels:
+      app: ${APP_NAME}
+    name: ${APP_NAME}-pipeline
+  spec:
+    source:
+      type: Git
+      git:
+        uri: ${GIT_REPO}
+        ref: ${GIT_BRANCH}
+    strategy:
+      jenkinsPipelineStrategy:
+        env:
+        - name: APP_NAME
+          value: ${APP_NAME}
+        - name: GIT_REPO
+          value: ${GIT_REPO}
+        - name: GIT_BRANCH
+          value: ${GIT_BRANCH}
+        jenkinsfilePath: Jenkinsfile
+      type: JenkinsPipeline
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -19,24 +43,18 @@ objects:
       app: ${APP_NAME}
     name: ${APP_NAME}
   spec:
-    triggers:
-    - type: "ConfigChange"
     output:
       to:
         kind: ImageStreamTag
         name: ${APP_NAME}:latest
     source:
-      git:
-        uri: ${GIT_REPO}
-        ref: ${GIT_BRANCH}
-      type: Git
-    strategy:
+      type: Binary
+    strategy: 
       sourceStrategy:
         from:
           kind: ImageStreamTag
           name: redhat-openjdk18-openshift:1.2
           namespace: openshift
-      type: Source
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -58,43 +76,19 @@ objects:
       spec:
         containers:
         - image: ${APP_NAME}:latest
-          name: hello-service
-          resources:
-            limits:
-              cpu: 1
-              memory: 512Mi
-            requests:
-              cpu: 1
-              memory: 512Mi
-          env:
-          - name: HELLO_MESSAGE
-            value: ${HELLO_MESSAGE}
-          - name: HELLO_POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: HELLO_POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: HELLO_ENVIRONMENT
-            valueFrom:
-              configMapKeyRef:
-                key: hello.environment
-                name: ${APP_NAME}
+          imagePullPolicy: Always
+          name: ${APP_NAME}
           ports:
           - containerPort: 8080
             protocol: TCP
-    triggers: 
+    triggers:
     - imageChangeParams:
-        automatic: true
         containerNames:
-        - ${APP_NAME}
+          - ${APP_NAME}
         from:
           kind: ImageStreamTag
           name: ${APP_NAME}:latest
       type: ImageChange
-    - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
@@ -120,37 +114,19 @@ objects:
     to:
       kind: Service
       name: ${APP_NAME}
-- apiVersion: v1
-  kind: ConfigMap
-  metadata: 
-    labels:
-      app: ${APP_NAME}
-    name: ${APP_NAME}
-  data:
-    hello.environment: ${ENVIRONMENT}
 parameters:
-- description: Application Name
+- name: APP_NAME
   displayName: Application Name
-  name: APP_NAME
+  description: Application Name
   required: true
-  value: hello-service
-- description: Git Repository
+  value: hello-openshift
+- name: GIT_REPO
   displayName: Git Repository
-  name: GIT_REPO
+  description: Git Repository
   required: true
-  value: ssh://git@github.com/redhatcsargentina/openshift-hello-service.git
-- description: Git Branch
+  value: https://github.com/leandroberetta/hello-openshift.git
+- name: GIT_BRANCH
   displayName: Git Branch
-  name: GIT_BRANCH
+  description: Git Branch
   required: true
   value: master
-- name: HELLO_MESSAGE
-  displayName: Hello Message
-  description: Hello Message
-  required: true
-  value: "Hello World from OpenShift!"
-- name: ENVIRONMENT
-  displayName: Environment
-  description: Environment
-  required: true
-  value: dev
