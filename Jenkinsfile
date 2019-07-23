@@ -24,7 +24,7 @@ pipeline {
         }
         stage("Build Image") {
             agent {
-                maven {
+                any {
                     steps {
                         script {
                             openshift.withCluster {
