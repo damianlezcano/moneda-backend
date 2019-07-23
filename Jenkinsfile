@@ -24,11 +24,13 @@ pipeline {
         }
         stage("Build Image") {
             agent {
-                steps {
-                    script {
-                        openshift.withCluster {
-                            openshift.withProject {
-                                openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
+                maven {
+                    steps {
+                        script {
+                            openshift.withCluster {
+                                openshift.withProject {
+                                    openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=./target", "--wait=true");
+                                }
                             }
                         }
                     }
