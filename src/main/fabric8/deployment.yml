@@ -1,0 +1,23 @@
+spec:
+  replicas: 1
+  containers:
+    - readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /rest
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 60
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 20
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /rest
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 120
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 20

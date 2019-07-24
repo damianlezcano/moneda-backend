@@ -58,7 +58,7 @@ pipeline {
                 }
             }
         }
-        stage ('testInDev') {
+        stage ('Validate OpenAPI Schema') {
             steps {
                 microcksTest(server: 'minishiftMicrocks',
                     serviceId: "Moneda:${env.TAG}",
