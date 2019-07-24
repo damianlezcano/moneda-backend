@@ -59,10 +59,12 @@ pipeline {
             }
         }
         stage ('testInDev') {
-            microcksTest(server: 'minishiftMicrocks',
-                serviceId: "Moneda:${env.TAG}",
-                testEndpoint: 'http://backend-service-dev.192.168.64.6.nip.io/camel/api-doc',
-                runnerType: '', verbose: 'true')
+            steps {
+                microcksTest(server: 'minishiftMicrocks',
+                    serviceId: "Moneda:${env.TAG}",
+                    testEndpoint: 'http://backend-service-dev.192.168.64.6.nip.io/camel/api-doc',
+                    runnerType: '', verbose: 'true')
+            }
         }
     }
 }
