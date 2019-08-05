@@ -1,0 +1,182 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Moneda",
+    "description": "Monedas",
+    "version": "1.0.0-SNAPSHOT"
+  },
+  "paths": {
+    "/monedas": {
+      "summary": "Path used to manage the list of Monedas.",
+      "description": "The REST endpoint/path used to list and create zero or more `Moneda` entities.  This path contains a `GET` and `POST` operation to perform the list and create tasks, respectively.",
+      "get": {
+        "summary": "List All Monedas",
+        "description": "Gets a list of all `Moneda` entities.",
+        "operationId": "getMonedas",
+        "responses": {
+          "200": {
+            "description": "Successful response - returns an array of `Moneda` entities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Moneda"
+                  }
+                },
+                "examples": {
+                  "test": {
+                    "value": [
+                      {
+                        "id": 66,
+                        "simbolo": "BOL",
+                        "cotizacion": 14.03
+                      },
+                      {
+                        "id": 79,
+                        "simbolo": "URG",
+                        "cotizacion": 70.61
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a Moneda",
+        "description": "Creates a new instance of a `Moneda`.",
+        "operationId": "createMoneda",
+        "requestBody": {
+          "description": "A new `Moneda` to be created.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Moneda"
+              },
+              "examples": {
+                "test": {
+                  "value": {
+                    "id": 40,
+                    "simbolo": "CHI",
+                    "cotizacion": 70.66
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response."
+          }
+        }
+      }
+    },
+    "/monedas/{id}": {
+      "summary": "Path used to manage a single Moneda.",
+      "description": "The REST endpoint/path used to get, update, and delete single instances of an `Moneda`.  This path contains `GET`, `PUT`, and `DELETE` operations used to perform the get, update, and delete tasks, respectively.",
+      "get": {
+        "summary": "Get a Moneda",
+        "description": "Gets the details of a single instance of a `Moneda`.",
+        "operationId": "getMoneda",
+        "responses": {
+          "200": {
+            "description": "Successful response - returns a single `Moneda`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Moneda"
+                },
+                "examples": {
+                  "test": {
+                    "value": {
+                      "id": 80,
+                      "simbolo": "BRL",
+                      "cotizacion": 51.45
+                    }
+                  },
+                  "test2": {
+                    "value": {
+                      "id": 66,
+                      "simbolo": "PER",
+                      "cotizacion": 8.46
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a Moneda",
+        "description": "Updates an existing `Moneda`.",
+        "operationId": "updateMoneda",
+        "requestBody": {
+          "description": "Updated `Moneda` information.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Moneda"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a Moneda",
+        "description": "Deletes an existing `Moneda`.",
+        "operationId": "deleteMoneda",
+        "responses": {
+          "204": {
+            "description": "Successful response."
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique identifier for a `Moneda`.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "components": {
+    "schemas": {
+      "Moneda": {
+        "title": "Root Type for Moneda",
+        "description": "entidad moneda",
+        "type": "object",
+        "properties": {
+          "id": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "simbolo": {
+            "type": "string"
+          },
+          "cotizacion": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "example": "{\n    \"id\": 1,\n    \"simbolo\": \"ARG\",\n    \"cotizacion\": 43.7\n}"
+      }
+    }
+  }
+}
